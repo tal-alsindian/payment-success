@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تل السنديان - نجاح الدفع</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(145deg, #2b5e25, #4caf50);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            direction: rtl;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .success-box {
+            background: white;
+            color: #1f4a1a;
+            padding: 40px 30px;
+            border-radius: 60px;
+            max-width: 500px;
+            width: 100%;
+            border: 5px solid white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #2b5e25;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+            border: 2px solid white;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            background: #1f4a1a;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2b5e25;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="success-box">
+        <h1>✅ تم الدفع بنجاح!</h1>
+        <div class="loader"></div>
+        <p>شكراً لاختيارك تل السنديان.</p>
+        <p>سيتم تجهيز طلبك فوراً وإرساله إلى المطبخ.</p>
+        <p id="countdown">سيتم تحويلك إلى القائمة خلال 5 ثوانٍ...</p>
+        <a href="menu.html" class="btn">العودة للقائمة</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const respStatus = urlParams.get('respStatus') || urlParams.get('status');
+        const tranRef = urlParams.get('tranRef') || urlParams.get('cart_id');
+
+        if (window.opener && window.opener.handlePaymentResult) {
+            window.opener.handlePaymentResult({
+                status: respStatus === 'A' ? 'success' : 'failed',
+                tranRef: tranRef,
+                respStatus: respStatus
+            });
+        }
+
+        let seconds = 5;
+        const countdownEl = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            seconds--;
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.href = 'menu.html';
+            } else {
+                countdownEl.textContent = `سيتم تحويلك إلى القائمة خلال ${seconds} ثوانٍ...`;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
